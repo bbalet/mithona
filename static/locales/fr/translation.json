@@ -15,6 +15,15 @@
 	"Disk usage": "Utilisation des disques",
 	"Login": "Connexion",
 	"logout": "Déconnexion",
+	
+	"month": "mois",
+	"week": "semaine",
+	"day": "jour",
+	"today": "aujourd'hui",
+
+	"OK. Return : %s": "OK. Retour : %s",
+	"OK: no data to be sent": "OK: no data to be sent",
+	"DISABLED: remote connection is disabled": "DISABLED: remote connection is disabled",
 		
 	"app": {
 		"name": "goServerView"

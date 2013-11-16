@@ -1,5 +1,7 @@
 {{define "body"}}
 	<link href="/fullcalendar/fullcalendar.css" rel="stylesheet">
+	<script type="text/javascript" src="/globalize/globalize.js"></script>
+	<script type="text/javascript" src="/globalize/cultures/globalize.cultures.js"></script>
 	<script type="text/javascript" src="/fullcalendar/fullcalendar.min.js"></script>
 		
 	<div class="container-fluid">
@@ -19,29 +21,35 @@
 	
 	<script type="text/javascript">
 	$(function() {
-		
-		$('#calendar').fullCalendar({
-        	events: "/events/dates",
-			error: function() {
-                alert('there was an error while fetching events!');
-            }
-    	});
-		
-		/*$('body').css({'cursor':'progress'});
-		var jqxhr = $.ajax({
-				type: "POST",
-				url: "/stat",
-				data: { query: "freespace" }
-			})
-			.always(function() {
-				$('body').css({'cursor':'default'});
-			})
-			.done(function(data, textStatus, jqXHR) {			
-				
-			})
-			.fail(function(jqXHR, textStatus, errorThrown) {
-				$('#frmMessage').html('<div class="alert"><a class="close" data-dismiss="alert">×</a><span>Erreur : ' + textStatus + '</span></div>');
-			});*/
+		//Initialize and globalize the fullCalendar
+		//Translate the fullCalendar using i18next library
+		i18n.init(function(t) {
+			Globalize.culture("{{.Language}}");
+			$('#calendar').fullCalendar({
+				theme: false,
+				header: {
+					left: 'prev,next today',
+					center: 'title',
+					right: 'month,agendaWeek,agendaDay'
+					},
+				monthNames: Globalize.culture().calendars.standard.months.names,
+				monthNamesShort: Globalize.culture().calendars.standard.months.namesAbbr,
+				dayNames: Globalize.culture().calendars.standard.days.names,
+				dayNamesShort: Globalize.culture().calendars.standard.days.namesAbbr,
+				columnFormat: {
+					day: Globalize.culture().calendars.standard.patterns.D,
+					week: Globalize.culture().calendars.standard.patterns.d
+				},
+				editable: false,
+				events: "/events/dates",
+				buttonText: {
+					today: i18n.t("today"),
+				    month: i18n.t("month"),
+				    week: i18n.t("week"),
+				    day: i18n.t("day")
+					}				
+	    	});		
+		});		
 	});
 	</script>
 {{end}}

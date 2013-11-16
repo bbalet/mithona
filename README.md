@@ -1,4 +1,4 @@
-# What is goServerView
+# What is mithona
 *mithona* is a toy project that helps me to explore Go (Google golang) framework and some librairies written in pure go.
 It can be run from console or as a service (on *Windows*, *Linux* or *MacOS*).
 I decided to share because it appears to be useful for some people and because I want to receive critics so as to improve my understanding of this new language.
@@ -25,6 +25,7 @@ I decided to share because it appears to be useful for some people and because I
 ## Tasks
 
 * [] Editable reports
+* [] Editable calendar (updated by admin)
 * [] Javascript file browser
 
 # Getting started
@@ -48,26 +49,26 @@ Stop the service from the OS' service control panel or with:
 ## Configuration
 Edit *conf/config.json*. Some changes are dynamically applied by the application :
 * **port** port number (e.g. "7777") not changed dynamically, require to restart.
-* **secured** is the application globally accessed through TLS (e.g. false)  not  changed dynamically, require to restart.
+* **secured** is the application globally accessed through TLS (e.g. false)  not  changed dynamically, require to restart. Modify the certificate and the public/private keys of the *conf* folder
 * **compression** enable GZIP/DEFLATE compression (e.g. true) for file transfert.
 * **Language** default language (e.g. "en").
 * **password** admin password hashed with SHA512 and encoded in base64 (e.g. "x61Ey612Kl2gpFL56FT9weDnpSo4AV8j8+qx2AuTHdRyY036xxzTTrw10Wq3+4qQyB+XURPWx1ONxp3Y3pB37A==").
 	
 Menu/feature setup:
-* **menu.files** (e.g. true)
-* **menu.folders** (e.g. true)
-* **menu.queries** (e.g. true)
-* **menu.network** (e.g. true)
+* **menu.files** Activate the individual file sharing menu entry (e.g. true)
+* **menu.folders** Activate the folder sharing menu entry (e.g. true)
+* **menu.queries** Activate the queries list menu entry (e.g. true)
+* **menu.network** Activate the network menu entry (e.g. true)
 * **menu.connect** Enable/Disable the remote connection feature (e.g. false)
-* **menu.reports** (e.g. true)
-* **menu.events** (e.g. true)
+* **menu.reports** Activate the reporting menu entry (e.g. true)
+* **menu.events** Activate the calendar menu entry (e.g. true)
 
 Files is an array where you list all the individual files you want to share:
-* **files[].name** (e.g. hosts")
-* **files[].description** (e.g. "Windows Hosts defintion")
-* **files[].path** (e.g. "C:\\Windows\\System32\\drivers\\etc\\hosts")
-* **files[].view** (e.g. "guests")
-* **files[].edit** (e.g. "admin")
+* **files[].name** Menu entry (e.g. "hosts")
+* **files[].description** Description of the file (e.g. "Windows Hosts defintion")
+* **files[].path** Full path to the file to be shared (e.g. "C:\\Windows\\System32\\drivers\\etc\\hosts")
+* **files[].view** Who can view the file content (e.g. "guests"). Not yet implemented.
+* **files[].edit** Who can view the file content (e.g. "admin"). Not yet implemented.
 
 Folders is an array where you list all the individual files you want to share:
 * **folders[].name** (e.g. "D drive")

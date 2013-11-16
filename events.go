@@ -25,18 +25,14 @@ import (
 func eventsHandler(w http.ResponseWriter, r *http.Request) {
 	var p = pageContent(r, "Events on this computer", nil)
 	err := templates["events"].ExecuteTemplate(w, "base", p)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
+	checkHttpError(err, w)
 }
 
 func eventsMessagesHandler(w http.ResponseWriter, r *http.Request) {
 
 	var messagesFile = XP + "/data/messages.json"
 	file, err := ioutil.ReadFile(messagesFile)
-	if err != nil {
-		logFatal("(eventsMessagesHandler) JSON file : ", err)
-	}
+	checkHttpError(err, w)
 	w.Header().Set("Content-Type", "application/json")
 	io.WriteString(w, string(file))
 }
@@ -47,9 +43,7 @@ func eventsDatesHandler(w http.ResponseWriter, r *http.Request) {
 	//endParam
 	var datesFile = XP + "/data/events.json"
 	file, err := ioutil.ReadFile(datesFile)
-	if err != nil {
-		logFatal("(eventsDatesHandler) JSON file : ", err)
-	}
+	checkHttpError(err, w)
 	w.Header().Set("Content-Type", "application/json")
 	io.WriteString(w, string(file))
 }

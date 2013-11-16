@@ -15,8 +15,12 @@
 	"Disk usage": "Disk usage",
 	"Login": "Login",
 	"logout": "logout",
-	
-	
+
+	"month": "month",
+	"week": "week",
+	"day": "day",
+	"today": "today",
+			
 	"OK. Return : %s": "OK. Return : %s",
 	"OK: no data to be sent": "OK: no data to be sent",
 	"DISABLED: remote connection is disabled": "DISABLED: remote connection is disabled",
