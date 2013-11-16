@@ -1,0 +1,96 @@
+{{define "body"}}
+	<div class="container-fluid">
+		<div class="row-fluid">
+			<div class="span12">
+				<label for="hostName">Machine</label>
+				<input type="text" name="hostName" id="hostName" placeholder="Adresse IP ou nom complet" required>
+				<button class="btn btn-primary" type="button" id="cmdLookupHost">Lookup</button>
+				<label for="portNumber">N° de port</label>
+				<input type="text" name="portNumber" id="portNumber" placeholder="Numéro de port" required>
+
+				<div class="btn-group" data-toggle="buttons-radio">
+				  <button type="button" class="btn btn-primary" id="cmdConnectTCP">TCP</button>
+				  <button type="button" class="btn btn-primary" id="cmdConnectUDP">UDP</button>
+				</div>
+
+				<label class="radio">
+				  <input type="radio" name="rdoSendMode" value="DoNotSend" checked>
+				  Ne pas envoyer de données
+				</label> 
+				<label class="radio">
+				  <input type="radio" name="rdoSendMode" value="SendRaw">
+				  Envoyer ces données
+				</label>
+				<label class="radio">
+				  <input type="radio" name="rdoSendMode" value="SendBase64">
+				  Ces données sont encodées en base64, les décoder avant envoi
+				</label>
+
+				<label for="dataToSend">Données à envoyer</label>
+				<textarea name="dataToSend" id="dataToSend"></textarea>
+			</div>
+        </div>
+		
+		<div class="row-fluid">
+			<div class="span4">	
+				<div id="frmMessage"></div>
+			</div>
+        </div>
+	</div>
+	
+	<script>
+	function send(protocol)
+	{
+		$('body').css({'cursor':'progress'});
+		var jqxhr = $.ajax({
+				type: "POST",
+				url: "/connect",
+				data: { hostName: $("#hostName").val(),
+						portNumber: $("#portNumber").val(),
+						protocol: protocol,
+						sendMode: $("input[name=rdoSendMode]:checked").val(),
+						dataToSend: $("#dataToSend").val()
+				}
+			})
+			.always(function() {
+				$('body').css({'cursor':'default'});
+			})
+			.done(function(data, textStatus, jqXHR) {
+				$('#frmMessage').html('<div class="alert"><a class="close" data-dismiss="alert">×</a><span>Connexion : ' + data + '</span></div>');
+			})
+			.fail(function(jqXHR, textStatus, errorThrown) {
+				$('#frmMessage').html('<div class="alert"><a class="close" data-dismiss="alert">×</a><span>Erreur : ' + textStatus + '</span></div>');
+			});
+	}
+	
+	
+	$(function() {	
+		//Button : cmdConnectTCP
+		$("#cmdConnectTCP").click(function() {
+			send("tcp");
+		});
+		//Button : cmdConnectUDP
+		$("#cmdConnectUDP").click(function() {
+			send("udp");
+		});
+		//Button : cmdLookupHost
+		$("#cmdLookupHost").click(function() {
+			$('body').css({'cursor':'progress'});
+			var jqxhr = $.ajax({
+				type: "POST",
+				url: "/lookup",
+				data: { hostName: $("#hostName").val() }
+			})
+			.always(function() {
+				$('body').css({'cursor':'default'});
+			})
+			.done(function(data, textStatus, jqXHR) {
+				$('#frmMessage').html('<div class="alert"><a class="close" data-dismiss="alert">×</a><span>IP : ' + data + '</span></div>');
+			})
+			.fail(function(jqXHR, textStatus, errorThrown) {
+				$('#frmMessage').html('<div class="alert"><a class="close" data-dismiss="alert">×</a><span>IP : ' + textStatus + '</span></div>');
+			});
+		});
+	});
+	</script>
+{{end}}

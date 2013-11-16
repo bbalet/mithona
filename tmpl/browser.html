@@ -1,0 +1,76 @@
+{{define "body"}}
+
+	<link rel=stylesheet href="/DataTables/media/css/jquery.dataTables.css">
+	<style type="text/css" media="screen">
+		.dataTables_info { padding-top: 0; }
+		.dataTables_paginate { padding-top: 0; }
+		.css_right { float: right; }
+		#example_wrapper .fg-toolbar { font-size: 0.8em }
+		#theme_links span { float: left; padding: 2px 10px; }
+		#example_wrapper { -webkit-box-shadow: 2px 2px 6px #666; box-shadow: 2px 2px 6px #666; border-radius: 5px; }
+		#example tbody {
+			border-left: 1px solid #AAA;
+			border-right: 1px solid #AAA;
+		}
+		#example thead th:first-child { border-left: 1px solid #AAA; }
+		#example thead th:last-child { border-right: 1px solid #AAA; }
+	</style>
+
+	{{$Folder := .Folder}}
+    <div class="container-fluid">
+		<div class="row-fluid">
+			<div class="span12">
+				<table summary="Directory Listing" class="table table-condensed" id="FileBrowser">
+					<thead>
+						<tr>
+							<th id="IsDir">IsDir</th>
+							<th id="Name">Name</th>
+							<th id="Size">Size</th>
+							<th id="ModTime">ModTime</th>
+							<th id="Mode">Mode</th>
+						</tr>
+					</thead>
+					<tbody>
+					{{range .Files}}
+						<tr>
+							<td>{{.IsDir}}</td>
+							<td><a href="/browser?folder={{$Folder}}&object={{.Path}}">{{.Name}}</a></td>
+							<td>{{.Size}}</td>
+							<td>{{.ModTime}}</td>
+							<td>{{.Mode}}</td>
+						</tr>
+					{{end}}
+					</tbody>
+				</table>				
+			</div>
+        </div>
+	</div>
+	
+	<script src="/DataTables/media/js/jquery.dataTables.min.js"></script>
+	<script>
+	$(function() {
+		$('#FileBrowser').dataTable({
+			"aaSorting": [ [0,'desc'], [1,'asc'] ],
+			"bFilter": true,
+			"bAutoWidth": false,
+			"bPaginate": false,
+			"bLengthChange": false,
+			"bStateSave": true
+		});
+	});	
+
+	/*
+			"oLanguage": {
+			"sLengthMenu": "Display _MENU_ records per page",
+			"sZeroRecords": "Nothing found - sorry",
+			"sInfo": "Showing _START_ to _END_ of _TOTAL_ records",
+			"sInfoEmpty": "Showing 0 to 0 of 0 records",
+			"sInfoFiltered": "(filtered from _MAX_ total records)"
+		}
+	*/
+	
+	
+	</script>
+	
+	
+{{end}}

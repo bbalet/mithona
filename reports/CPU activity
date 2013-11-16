@@ -1,0 +1,102 @@
+	<link href="/jqplot/jquery.jqplot.min.css" rel="stylesheet">
+	<script type="text/javascript" src="/jqplot/jquery.jqplot.min.js"></script>
+	<script type="text/javascript" src="/jqplot/plugins/jqplot.pieRenderer.min.js"></script>
+	
+	
+	    <div class="container-fluid">
+			
+		<div class="row-fluid">
+			<div class="span12">
+			
+				<div id="chart" style="height:300px; width:500px;"></div>
+
+			</div>
+        </div>
+		
+		<div class="row-fluid">
+			<div class="span4">	
+				<div id="frmMessage"></div>
+			</div>
+        </div>
+	</div>
+	
+	<script type="text/javascript">
+	//http://gayashan-a.blogspot.fr/2012/08/simple-dynamically-updating-line-chart.html
+	$(document).ready(function() {
+		var i = 0;
+		var data = [[]];
+		var renderer = function() {
+			//create random data needed for the initial plot
+			for (i = 0; i < 15; i++) {
+				data[0].push([i, Math.random()]);
+			}
+			i = 15;
+			return data;
+		};
+		//create the chart
+		var plot1 = $.jqplot('chart1', [[]], {
+			dataRenderer: renderer,
+			seriesDefaults: {
+				rendererOptions: {
+					smooth: true,
+					animation: {
+						show: true
+					}
+				}
+			}
+		});
+
+		//in every 5s interval replot the graph with newData (new random data)          
+		var intervalId = setInterval(function() {
+			var newData = new Array();
+			newData = data;
+			//remove the first element from the data array
+			newData[0].shift();
+			//add a new element to the end of the array
+			newData[0].push([i++, Math.random()]);
+			plot1.series[0].data = newData[0];
+			plot1.resetAxesScale();
+			plot1.replot();
+		}, 5000);
+	});
+
+	//toggle the css class of the chart on button click
+	$("#flipbutton").click(function() {
+		$("#chart1").toggleClass("vertical");
+	});
+	
+	$(function() {
+		$('body').css({'cursor':'progress'});
+		var jqxhr = $.ajax({
+				type: "POST",
+				url: "/stat",
+				data: { query: "cpu" }
+			})
+			.always(function() {
+				$('body').css({'cursor':'default'});
+			})
+			.done(function(data, textStatus, jqXHR) {			
+				var data_length = data.Records.length;
+				for (var i = 0; i < data_length; i++) {
+
+					var plot_title  = data.Records[i].Columns[0];
+					var free_space  = ((data.Records[i].Columns[1] == "") ? 0 : Math.round(parseInt(data.Records[i].Columns[1]) / 1073741824));
+					var used_space = ((data.Records[i].Columns[2] == "") ? 0 : Math.round(parseInt(data.Records[i].Columns[2]) / 1073741824));
+					var data_plot = [['Free : ' + free_space + ' GB', free_space],['Used : ' + used_space + ' GB', used_space]];
+					
+					var plot = jQuery.jqplot ('chart_' + i, [data_plot], 
+					{
+						seriesDefaults: {
+							renderer: jQuery.jqplot.PieRenderer, 
+							rendererOptions: { showDataLabels: true }
+						}, 
+						legend: { show:true, location: 'e' },
+						title : { show:true, text: plot_title}
+					});
+				}
+			})
+			.fail(function(jqXHR, textStatus, errorThrown) {
+				$('#frmMessage').html('<div class="alert"><a class="close" data-dismiss="alert">×</a><span>Error: ' + textStatus + '</span></div>');
+			});
+	});
+	</script>

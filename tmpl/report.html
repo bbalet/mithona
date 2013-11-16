@@ -1,0 +1,28 @@
+{{define "body"}}
+	<link rel=stylesheet href="/codemirror/lib/codemirror.css">
+	<style>
+	  .CodeMirror { height: auto; border: 1px solid #ddd; }
+	  .CodeMirror-scroll { max-height: 700px; }
+	  .CodeMirror pre { padding-left: 7px; line-height: 1.25; }
+	</style>
+   
+    <div class="container-fluid">
+		<div class="row-fluid">
+			<div class="span12">
+			
+<textarea rows="60" cols="80" id="hostsFile">
+{{printf "%s" .Value}}
+</textarea>
+			
+			</div>
+        </div>
+	</div> 
+	
+	<script src="/codemirror/lib/codemirror.js"></script>
+	<script>
+    var editor = CodeMirror.fromTextArea(document.getElementById("hostsFile"), {
+      lineNumbers: true,
+      mode: "text/css"
+    });
+  </script>
+{{end}}

@@ -1,0 +1,71 @@
+{{define "body"}}
+	<link href="/jqplot/jquery.jqplot.min.css" rel="stylesheet">
+	<script type="text/javascript" src="/jqplot/jquery.jqplot.min.js"></script>
+	<script type="text/javascript" src="/jqplot/plugins/jqplot.pieRenderer.min.js"></script>
+	
+	
+	    <div class="container-fluid">
+		
+		<div class="row-fluid">
+			Fonctions disponibles :
+			<ul>
+				<li><a href="/network">Fonctions réseau</a></li>
+				<li><a href="/share?file=hosts">Contenu du fichier host</a></li>
+			</ul>
+		</div>
+		
+		<div class="row-fluid">
+			<div class="span12">
+			
+				<div id="charts"></div>
+
+			</div>
+        </div>
+		
+		<div class="row-fluid">
+			<div class="span4">	
+				<div id="frmMessage"></div>
+			</div>
+        </div>
+	</div>
+	
+	<script type="text/javascript">
+	$(function() {	
+		
+		$('body').css({'cursor':'progress'});
+		var jqxhr = $.ajax({
+				type: "POST",
+				url: "/stat",
+				data: { query: "freespace" }
+			})
+			.always(function() {
+				$('body').css({'cursor':'default'});
+			})
+			.done(function(data, textStatus, jqXHR) {			
+				var data_length = data.Records.length;
+				for (var i = 0; i < data_length; i++) {
+					//Add a chart
+					$("#charts").append("<div id='chart_" + i + "' style='height:300px; width:500px;'></div>");
+					//Reply is in Bytes, convert in GB
+					var plot_title  = data.Records[i].Columns[0];
+					var free_space  = ((data.Records[i].Columns[1] == "") ? 0 : Math.round(parseInt(data.Records[i].Columns[1]) / 1073741824));
+					var used_space = ((data.Records[i].Columns[2] == "") ? 0 : Math.round(parseInt(data.Records[i].Columns[2]) / 1073741824));
+					var data_plot = [['Free : ' + free_space + ' GB', free_space],['Used : ' + used_space + ' GB', used_space]];
+					
+					var plot = jQuery.jqplot ('chart_' + i, [data_plot], 
+					{
+						seriesDefaults: {
+							renderer: jQuery.jqplot.PieRenderer, 
+							rendererOptions: { showDataLabels: true }
+						}, 
+						legend: { show:true, location: 'e' },
+						title : { show:true, text: plot_title}
+					});
+				}
+			})
+			.fail(function(jqXHR, textStatus, errorThrown) {
+				$('#frmMessage').html('<div class="alert"><a class="close" data-dismiss="alert">×</a><span>Erreur : ' + textStatus + '</span></div>');
+			});
+	});
+	</script>
+{{end}}

@@ -1,0 +1,46 @@
+{{define "body"}}
+		<script src="/js/jsencrypt.min.js"></script>
+
+	<div class="container-fluid">
+			
+		<div class="row-fluid">
+			<div class="span12">
+			
+				<form id="target" action="/loginAction" method="POST">
+					<label for="User">User:</label>
+					<input type="text" name="User" autofocus required /><br />
+					<input type="hidden" name="CipheredValue" id="CipheredValue" /><br />
+				</form>
+				<label for="Password">Password:</label>
+				<input type="password" name="Password" id="Password" required /><br />
+				<input id="cmdSubmit" type="button" value="send"  class="btn btn-primary"/>
+
+			</div>
+        </div>
+		
+		<div class="row-fluid">
+			<div class="span4">	
+				<div id="frmMessage">{{.Message}}</div>
+			</div>
+        </div>
+	</div>
+		
+	<script>
+	var public_key = "{{printf "%s" .Value}}";
+	
+	$(function() {
+		
+		//$('#frmMessage').html('');
+		
+		//Mimic submit form action but send en encrypted value instead
+		//of the password field content
+		$('#cmdSubmit').click(function() {
+			var encrypt = new JSEncrypt();
+			encrypt.setPublicKey(public_key);
+			var encrypted = encrypt.encrypt($('#Password').val());
+			$('#CipheredValue').val(encrypted);
+			$('#target').submit();
+		});
+	});	
+	</script>
+{{end}}

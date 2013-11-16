@@ -1,0 +1,185 @@
+{
+	"port": ":7777",
+	"secured": false,
+	"compression": true,
+	"Language": "fr",
+	"password": "x61Ey612Kl2gpFL56FT9weDnpSo4AV8j8+qx2AuTHdRyY036xxzTTrw10Wq3+4qQyB+XURPWx1ONxp3Y3pB37A==",
+	
+	"menu":
+	{
+		"files": true,
+		"folders": true,
+		"queries": true,
+		"network": true,
+		"connect": false,
+		"reports": true,
+		"events": true
+	},
+	
+	"files":
+	[
+		{
+			"name": "hosts",
+			"description": "Windows Hosts defintion",
+			"path": "C:\\Windows\\System32\\drivers\\etc\\hosts",
+			"view": "guests",
+			"edit": "admin"
+		}
+	],
+
+	"folders":
+	[
+		{
+			"name": "D drive",
+			"description": "My D drive",
+			"path": "D:\\"
+		}
+	],
+	
+	"queries":
+	[
+		{
+			"name": "disk",
+			"type": "graph",
+			"description": "Disk usage",
+			"lifetime": 1000,
+			"cmdLine": "C:\\Windows\\System32\\wbem\\wmic.exe path Win32_PerfFormattedData_PerfDisk_PhysicalDisk get Name, PercentDiskTime, AvgDiskQueueLength, DiskReadBytesPerSec, DiskWriteBytesPerSec /format:csv",
+			"columns":
+			[
+				{ "Name":"Node", "Type":"label", "Ignore":true },
+				{ "Name":"Name", "Type":"label", "Ignore":false },
+				{ "Name":"AvgDiskQueueLength", "Type":"numeric", "Ignore":false },
+				{ "Name":"DiskReadBytesPersec", "Type":"numeric", "Ignore":false },
+				{ "Name":"DiskWriteBytesPersec", "Type":"numeric", "Ignore":false },
+				{ "Name":"PercentDiskTime", "Type":"numeric", "Ignore":false }
+			]
+		},
+		{
+			"name": "freespace",
+			"type": "graph",
+			"description": "Available space on disk",
+			"lifetime": 1000,
+			"cmdLine": "C:\\Windows\\System32\\wbem\\wmic.exe path Win32_LogicalDisk get Caption, FreeSpace, Size /format:csv",
+			"columns":
+			[
+				{ "Name":"Node", "Type":"label", "Ignore":true },
+				{ "Name":"Caption", "Type":"label", "Ignore":false },
+				{ "Name":"FreeSpace", "Type":"numeric", "Ignore":false },
+				{ "Name":"Size", "Type":"numeric", "Ignore":false }
+			]
+		},
+		{
+			"name": "processor",
+			"type": "graph",
+			"description": "Processor usage",
+			"lifetime": 1000,
+			"cmdLine": "C:\\Windows\\System32\\wbem\\wmic.exe path Win32_PerfFormattedData_PerfOS_Processor get Name, PercentProcessorTime /format:csv",
+			"columns":
+			[
+				{ "Name":"Node", "Type":"label", "Ignore":true },
+				{ "Name":"Name", "Type":"label", "Ignore":false },
+				{ "Name":"PercentProcessorTime", "Type":"numeric", "Ignore":false }
+			]
+		},
+		{
+			"name": "network",
+			"type": "graph",
+			"description": "Network usage",
+			"lifetime": 1000,
+			"cmdLine": "C:\\Windows\\System32\\wbem\\wmic.exe path Win32_PerfFormattedData_Tcpip_NetworkInterface get Name, currentbandwidth, BytesReceivedPerSec, BytesSentPerSec, OutputQueueLength, PacketsReceivedErrors /format:csv",
+			"columns":
+			[
+				{ "Name":"Node", "Type":"label", "Ignore":true },
+				{ "Name":"Name", "Type":"label", "Ignore":false },
+				{ "Name":"currentbandwidth", "Type":"numeric", "Ignore":false },
+				{ "Name":"BytesReceivedPerSec", "Type":"numeric", "Ignore":false },
+				{ "Name":"BytesSentPerSec", "Type":"numeric", "Ignore":false },
+				{ "Name":"OutputQueueLength", "Type":"numeric", "Ignore":false },
+				{ "Name":"PacketsReceivedErrors", "Type":"numeric", "Ignore":false }
+			]
+		},
+		{
+			"name": "memory",
+			"type": "graph",
+			"description": "Memory usage",
+			"lifetime": 1000,
+			"cmdLine": "C:\\Windows\\System32\\wbem\\wmic.exe path Win32_PerfFormattedData_PerfOS_Memory get CommittedBytes, AvailableBytes, PercentCommittedBytesInUse, PagesPerSec, PageFaultsPerSec /format:csv",
+			"columns":
+			[
+				{ "Name":"Node", "Type":"label", "Ignore":false },
+				{ "Name":"CommittedBytes", "Type":"numeric", "Ignore":false },
+				{ "Name":"AvailableBytes", "Type":"numeric", "Ignore":false },
+				{ "Name":"PercentCommittedBytesInUse", "Type":"numeric", "Ignore":false },
+				{ "Name":"PagesPerSec", "Type":"numeric", "Ignore":false },
+				{ "Name":"PageFaultsPerSec", "Type":"numeric", "Ignore":false }
+			]
+		},
+		{
+			"name": "process",
+			"type": "datatable",
+			"description": "List of Processes",
+			"lifetime": 1000,
+			"cmdLine": "C:\\Windows\\System32\\wbem\\wmic.exe path Win32_PerfFormattedData_PerfProc_Process get * /format:csv",
+			"columns":
+			[
+				{ "Name":"Node", "Type":"label", "Ignore":true },
+				{ "Name":"Caption", "Type":"label", "Ignore":true },
+				{ "Name":"Name", "Type":"label", "Ignore":false },
+				{ "Name":"CreatingProcessID", "Type":"numeric", "Ignore":false },
+				{ "Name":"Description", "Type":"numeric", "Ignore":false },
+				{ "Name":"ElapsedTime", "Type":"numeric", "Ignore":false },
+				{ "Name":"Frequency_Object", "Type":"numeric", "Ignore":false },
+				{ "Name":"Frequency_PerfTime", "Type":"numeric", "Ignore":false },
+				{ "Name":"Frequency_Sys100NS", "Type":"numeric", "Ignore":false },
+				{ "Name":"HandleCount", "Type":"numeric", "Ignore":false },
+				{ "Name":"IDProcess", "Type":"numeric", "Ignore":false },
+				{ "Name":"IODataBytesPersec", "Type":"numeric", "Ignore":false },
+				{ "Name":"IODataOperationsPersec", "Type":"numeric", "Ignore":false },
+				{ "Name":"IOOtherBytesPersec", "Type":"numeric", "Ignore":false },
+				{ "Name":"IOOtherOperationsPersec", "Type":"numeric", "Ignore":false },
+				{ "Name":"IOReadBytesPersec", "Type":"numeric", "Ignore":false },
+				{ "Name":"IOReadOperationsPersec", "Type":"numeric", "Ignore":false },
+				{ "Name":"IOWriteBytesPersec", "Type":"numeric", "Ignore":false },
+				{ "Name":"IOWriteOperationsPersec", "Type":"numeric", "Ignore":false },
+				{ "Name":"PageFaultsPersec", "Type":"numeric", "Ignore":false },
+				{ "Name":"PageFileBytes", "Type":"numeric", "Ignore":false },
+				{ "Name":"PercentPrivilegedTime", "Type":"numeric", "Ignore":false },
+				{ "Name":"PercentProcessorTime", "Type":"numeric", "Ignore":false },
+				{ "Name":"PercentUserTime", "Type":"numeric", "Ignore":false },
+				{ "Name":"PoolNonpagedBytes", "Type":"numeric", "Ignore":false },
+				{ "Name":"PoolPagedBytes", "Type":"numeric", "Ignore":false },
+				{ "Name":"PriorityBase", "Type":"numeric", "Ignore":false },
+				{ "Name":"PrivateBytes", "Type":"numeric", "Ignore":false },
+				{ "Name":"ThreadCount", "Type":"numeric", "Ignore":false },
+				{ "Name":"Timestamp_Object", "Type":"numeric", "Ignore":false },
+				{ "Name":"Timestamp_PerfTime", "Type":"numeric", "Ignore":false },
+				{ "Name":"Timestamp_Sys100NS", "Type":"numeric", "Ignore":false },
+				{ "Name":"VirtualBytes", "Type":"numeric", "Ignore":false },
+				{ "Name":"WorkingSet", "Type":"numeric", "Ignore":false },
+				{ "Name":"WorkingSetPeak", "Type":"numeric", "Ignore":false },
+				{ "Name":"WorkingSetPrivate", "Type":"numeric", "Ignore":false }
+			]
+		},
+		{
+			"name": "os",
+			"type": "values",
+			"lifetime": 360000,
+			"description": "Operating system details",
+			"cmdLine": "C:\\Windows\\System32\\wbem\\wmic.exe path Win32_OperatingSystem get * /VALUE"
+		},
+		{
+			"name": "computer",
+			"type": "values",
+			"lifetime": 360000,
+			"description": "Details on the computer",
+			"cmdLine": "C:\\Windows\\System32\\wbem\\wmic.exe path Win32_ComputerSystem get * /VALUE"
+		},
+		{
+			"name": "processor-table",
+			"type": "values",
+			"lifetime": 360000,
+			"description": "Details on the CPU",
+			"cmdLine": "C:\\Windows\\System32\\wbem\\wmic.exe path Win32_Processor get * /VALUE"
+		}		
+	]
+}

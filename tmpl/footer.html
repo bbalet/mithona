@@ -1,0 +1,29 @@
+{{define "footer"}}
+      <footer>
+		<hr />
+		<div class="container-fluid">
+			<div class="row-fluid">
+				<div class="span4">
+					<p><img src="/img/slickgnu.tiny.png" style="height: 20px;"></p>
+				</div>
+				<div class="span4">
+					<p>goServerView</p>
+				</div>
+				<div class="span4">
+					<p class="pull-right"><a href="#" data-i18n="go top">go top</a></p>
+				</div>
+			</div>
+		</div>
+		</footer>
+		<script src="/js/i18next-1.7.1.min.js"></script>
+		<script type="text/javascript">
+		//Translate all translatable content
+		$(function() {
+			i18n.init(function(t) {
+				$("*[data-i18n]").i18n();
+			});
+		});
+		</script>
+  </body>
+</html>
+{{end}}

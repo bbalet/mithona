@@ -1,0 +1,19 @@
+{
+	"go top": "go top",
+	"About": "About",
+	"Network utilities": "Network utilities",
+	
+	"Network": "Network",
+	"Events": "Events",
+	"Reports": "Reports",
+	"Files": "Files",
+	"Folders": "Folders",
+	"Queries": "Queries",
+	"Disk usage": "Disk usage",
+	"Login": "Login",
+	"logout": "logout",
+	
+	"app": {
+		"name": "goServerView"
+	}
+}

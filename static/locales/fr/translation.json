@@ -1,0 +1,19 @@
+{
+	"go top": "Revenir en haut",
+	"About": "À propos",
+	"Network utilities": "Utilitaires réseau",
+	
+	"Network": "Réseau",
+	"Events": "Evènements",
+	"Reports": "Rapports",
+	"Files": "Fichiers",
+	"Folders": "Dossiers",
+	"Queries": "Requêtes",
+	"Disk usage": "Utilisation des disques",
+	"Login": "Connexion",
+	"logout": "Déconnexion",
+		
+	"app": {
+		"name": "goServerView"
+	}
+}
