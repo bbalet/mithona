@@ -2,6 +2,9 @@
 	"go top": "go top",
 	"About": "About",
 	"Network utilities": "Network utilities",
+	"File content": "File content",
+	"Homepage": "Homepage",
+	"Events on this computer": "Events on this computer",
 	
 	"Network": "Network",
 	"Events": "Events",
@@ -12,6 +15,11 @@
 	"Disk usage": "Disk usage",
 	"Login": "Login",
 	"logout": "logout",
+	
+	
+	"OK. Return : %s": "OK. Return : %s",
+	"OK: no data to be sent": "OK: no data to be sent",
+	"DISABLED: remote connection is disabled": "DISABLED: remote connection is disabled",
 	
 	"app": {
 		"name": "goServerView"

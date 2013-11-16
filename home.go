@@ -1,6 +1,6 @@
 package main
 
-/*  goServerView allows to simply share information on a server with its users
+/*  mithona allows to simply share information on a server with its users
     Copyright (C) 2013 Benjamin BALET
 
     This program is free software: you can redistribute it and/or modify
@@ -17,24 +17,12 @@ package main
     along with this program.  If not, see <http://www.gnu.org/licenses/>.*/
 
 import (
-	"html/template"
 	"net/http"
-	"os"
 )
 
-// homeHandler is an HTTP Handler that displays and runs the logic
-// for the homepage.
+// homeHandler is the HTTP Handler of the homepage
 func homeHandler(w http.ResponseWriter, r *http.Request) {
-	hostNameInfo, err := os.Hostname()
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		logFatal("get Hostname from Kernel: %s", err)
-	}
-	var p = Page{Title: "Utilitaires pour l'injecteur", Hostname: hostNameInfo,
-		Language: "fr", Menu: template.HTML(buildMenu(r))}
-
-	err = templates["home"].ExecuteTemplate(w, "base", p)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
+	var p = pageContent(r, "Homepage", nil)
+	err := templates["home"].ExecuteTemplate(w, "base", p)
+	checkHttpError(err, w)
 }

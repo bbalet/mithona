@@ -17,6 +17,7 @@ package main
     along with this program.  If not, see <http://www.gnu.org/licenses/>.*/
 
 import (
+	"code.google.com/p/go.exp/fsnotify"
 	"compress/gzip"
 	"html/template"
 	"io"
@@ -39,6 +40,47 @@ type Page struct {
 	Version  string
 }
 
+// createTemplateMap defines the map of nested templates
+func createTemplateMap() {
+	templates["home"] = template.Must(template.ParseFiles(XP+"/tmpl/home.html", XP+"/tmpl/base.html", XP+"/tmpl/menu.html", XP+"/tmpl/header.html", XP+"/tmpl/footer.html"))
+	templates["connect"] = template.Must(template.ParseFiles(XP+"/tmpl/connect.html", XP+"/tmpl/base.html", XP+"/tmpl/menu.html", XP+"/tmpl/header.html", XP+"/tmpl/footer.html"))
+	templates["network"] = template.Must(template.ParseFiles(XP+"/tmpl/network.html", XP+"/tmpl/base.html", XP+"/tmpl/menu.html", XP+"/tmpl/header.html", XP+"/tmpl/footer.html"))
+	templates["browser"] = template.Must(template.ParseFiles(XP+"/tmpl/network.html", XP+"/tmpl/base.html", XP+"/tmpl/menu.html", XP+"/tmpl/header.html", XP+"/tmpl/footer.html"))
+	templates["sharefile"] = template.Must(template.ParseFiles(XP+"/tmpl/sharefile.html", XP+"/tmpl/base.html", XP+"/tmpl/menu.html", XP+"/tmpl/header.html", XP+"/tmpl/footer.html"))
+	templates["browser"] = template.Must(template.ParseFiles(XP+"/tmpl/browser.html", XP+"/tmpl/base.html", XP+"/tmpl/menu.html", XP+"/tmpl/header.html", XP+"/tmpl/footer.html"))
+	templates["report"] = template.Must(template.ParseFiles(XP+"/tmpl/report.html", XP+"/tmpl/base.html", XP+"/tmpl/menu.html", XP+"/tmpl/header.html", XP+"/tmpl/footer.html"))
+	templates["report-edit"] = template.Must(template.ParseFiles(XP+"/tmpl/report-edit.html", XP+"/tmpl/base.html", XP+"/tmpl/menu.html", XP+"/tmpl/header.html", XP+"/tmpl/footer.html"))
+	templates["events"] = template.Must(template.ParseFiles(XP+"/tmpl/events.html", XP+"/tmpl/base.html", XP+"/tmpl/menu.html", XP+"/tmpl/header.html", XP+"/tmpl/footer.html"))
+	templates["login"] = template.Must(template.ParseFiles(XP+"/tmpl/login.html", XP+"/tmpl/base.html", XP+"/tmpl/menu.html", XP+"/tmpl/header.html", XP+"/tmpl/footer.html"))
+}
+
+// fsTemplatesWatcher watches if the template files have been modified
+// and reparse them again dynamically is they have been changed
+func fsTemplatesWatcher() {
+	watcher, err := fsnotify.NewWatcher()
+	if err != nil {
+		logFatal("(fsConfigWatcher) fsnotify.NewWatcher() : ", err)
+	}
+
+	go func() {
+		for {
+			select {
+			case ev := <-watcher.Event:
+				logInfo("event: %v", ev)
+				createTemplateMap()
+			case err := <-watcher.Error:
+				logInfo("error: %v", err)
+			}
+		}
+	}()
+
+	err = watcher.WatchFlags(XP+"/tmpl/", fsnotify.FSN_MODIFY)
+	if err != nil {
+		logFatal("(fsConfigWatcher) watcher.WatchFlags(fsnotify.FSN_MODIFY) : ", err)
+	}
+}
+
+// pageContent fills a standard Page struct
 func pageContent(r *http.Request, t string, v []byte) Page {
 	hostNameInfo, err := os.Hostname()
 	if err != nil {
@@ -60,7 +102,7 @@ func pageContent(r *http.Request, t string, v []byte) Page {
 	return p
 }
 
-//Serve GZIP content
+// makeHandler serves GZIP content
 func makeHandler(fn func(http.ResponseWriter, *http.Request)) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if !strings.Contains(r.Header.Get("Accept-Encoding"), "gzip") {
@@ -142,6 +184,7 @@ func eq(args ...interface{}) bool {
 	return false
 }
 
+// parseRange parses a Range header field
 func parseRange(data string) int64 {
 	stop := (int64)(0)
 	part := 0
@@ -171,6 +214,7 @@ func parseRange(data string) int64 {
 	return stop
 }
 
+// parseCSV parses comma-separated values
 func parseCSV(data string) []string {
 	splitted := strings.Split(data, ",")
 

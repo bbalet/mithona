@@ -1,6 +1,6 @@
 package main
 
-/*  goServerView allows to simply share information on a server with its users
+/*  mithona allows to simply share information on a server with its users
     Copyright (C) 2013 Benjamin BALET
 
     This program is free software: you can redistribute it and/or modify
@@ -17,12 +17,11 @@ package main
     along with this program.  If not, see <http://www.gnu.org/licenses/>.*/
 
 import (
-	"html/template"
 	"io/ioutil"
 	"net/http"
-	"os"
 )
 
+// isFileAvailable checks in config if the file is shared or not
 func isFileAvailable(name string) (file FileType, isFound bool) {
 	for _, element := range config.Files {
 		if element.Name == name {
@@ -32,31 +31,22 @@ func isFileAvailable(name string) (file FileType, isFound bool) {
 	return FileType{}, false
 }
 
+// fileShareHandler is the HTTP handler for the file sharing feature
 func fileShareHandler(w http.ResponseWriter, r *http.Request) {
-	//Check if the file is shared or not
+	//If the requested file is not shared, return a 404 HTTP error
 	queryFile := r.FormValue("file")
 	file, found := isFileAvailable(queryFile)
 	if found == false {
 		http.Redirect(w, r, "/", http.StatusFound)
 		return
 	}
-	//Get the content
-	hostsData, err := ioutil.ReadFile(file.Path)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		logFatal("read hosts file: %s", err)
-	}
+
+	//Get the file content
+	fileContent, err := ioutil.ReadFile(file.Path)
+	checkHttpError(err, w)
+
 	//Render the page
-	hostNameInfo, err := os.Hostname()
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		logFatal("get Hostname from Kernel: %s", err)
-	}
-	var p = Page{Title: "File content", Hostname: hostNameInfo,
-		Language: "fr", Menu: template.HTML(buildMenu(r)),
-		Value: hostsData}
+	var p = pageContent(r, "File content", fileContent)
 	err = templates["sharefile"].ExecuteTemplate(w, "base", p)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
+	checkHttpError(err, w)
 }

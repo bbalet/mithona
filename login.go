@@ -1,6 +1,6 @@
 package main
 
-/*  goServerView allows to simply share information on a server with its users
+/*  mithona allows to simply share information on a server with its users
     Copyright (C) 2013 Benjamin BALET
 
     This program is free software: you can redistribute it and/or modify
@@ -27,15 +27,13 @@ import (
 	"net/http"
 )
 
-//If wrong credentials, then redirect to loginFormHandler with Flash message
+// loginActionHandler is the HTTP handler for the login action
+// If wrong credentials, then redirect to loginFormHandler with Flash message
 func loginActionHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Read the private key
 	pemData, err := ioutil.ReadFile(PRIVATE_KEY_FILE)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	checkHttpError(err, w)
 
 	// Extract the PEM-encoded data block
 	block, _ := pem.Decode(pemData)
@@ -50,24 +48,16 @@ func loginActionHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Decode the RSA private key
 	priv, err := x509.ParsePKCS1PrivateKey(block.Bytes)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	checkHttpError(err, w)
 
 	// Decode the Base64 into binary
 	cipheredValue, err := base64.StdEncoding.DecodeString(r.FormValue("CipheredValue"))
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	checkHttpError(err, w)
 
 	// Decrypt the data
 	var out []byte
 	out, err = rsa.DecryptPKCS1v15(rand.Reader, priv, cipheredValue)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
+	checkHttpError(err, w)
 
 	//home or login
 	session, _ := store.Get(r, "goServerView")
@@ -88,17 +78,14 @@ func loginActionHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// loginFormHandler is the HTTP handler for the login form
 func loginFormHandler(w http.ResponseWriter, r *http.Request) {
 	// Read the public key
 	pemData, err := ioutil.ReadFile(PUBLIC_KEY_FILE)
-	if err != nil {
-		logFatal("read key file: %s", err)
-	}
+	checkHttpError(err, w)
 	var p = pageContent(r, "Login", pemData)
 	err = templates["login"].ExecuteTemplate(w, "base", p)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
+	checkHttpError(err, w)
 }
 
 // logoutHandler closes the admin session

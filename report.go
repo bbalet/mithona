@@ -1,6 +1,6 @@
 package main
 
-/*  goServerView allows to simply share information on a server with its users
+/*  mithona allows to simply share information on a server with its users
     Copyright (C) 2013 Benjamin BALET
 
     This program is free software: you can redistribute it and/or modify

@@ -3,6 +3,8 @@
 It can be run from console or as a service (on *Windows*, *Linux* or *MacOS*).
 I decided to share because it appears to be useful for some people and because I want to receive critics so as to improve my understanding of this new language.
 
+*mithona* is currently under development
+
 ## Features
 * Simply share information from a machine (a file, a folder...).
 * Test if another computer can be accessed from the machine where *goServerView* is installed.
@@ -22,7 +24,8 @@ I decided to share because it appears to be useful for some people and because I
 
 ## Tasks
 
-* [] https://github.com/fizx/jailer evaluate
+* [] Editable reports
+* [] Javascript file browser
 
 # Getting started
 Go to the root folder and run the following command:

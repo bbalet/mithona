@@ -1,6 +1,6 @@
 package main
 
-/*  goServerView allows to simply share information on a server with its users
+/*  mithona allows to simply share information on a server with its users
     Copyright (C) 2013 Benjamin BALET
 
     This program is free software: you can redistribute it and/or modify
@@ -20,35 +20,30 @@ import (
 	"bufio"
 	"encoding/base64"
 	"fmt"
-	"html/template"
 	"net"
 	"net/http"
-	"os"
 )
 
+// networkHandler is the HTTP handler for the network utilities feature
 func networkHandler(w http.ResponseWriter, r *http.Request) {
-	hostNameInfo, err := os.Hostname()
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		logFatal("get Hostname from Kernel: %s", err)
-	}
-	var p = Page{Title: "Network utils", Hostname: hostNameInfo,
-		Language: "fr", Menu: template.HTML(buildMenu(r))}
-	err = templates["network"].ExecuteTemplate(w, "base", p)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
+	var p = pageContent(r, "Network utilities", nil)
+	err := templates["network"].ExecuteTemplate(w, "base", p)
+	checkHttpError(err, w)
 }
 
+// lookupHandler is the HTTP handler for the lookup utility
+// it checks if hostName is available and return a status in JSON
 func lookupHandler(w http.ResponseWriter, r *http.Request) {
 	hostName := r.FormValue("hostName")
 	addrs, err := net.LookupHost(hostName)
 	fmt.Fprintf(w, "%s", addrs)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
+	checkHttpError(err, w)
 }
 
+// connectHandler is the HTTP handler for the connect utility
+// it tries to connect to hostName:portNumber using protocol
+// it can send some data (dataToSend) in raw or base64 decoded (sendMode)
+// and it returns a status in JSON
 func connectHandler(w http.ResponseWriter, r *http.Request) {
 	if config.Menu.Connect {
 		hostName := r.FormValue("hostName")
@@ -58,14 +53,10 @@ func connectHandler(w http.ResponseWriter, r *http.Request) {
 		dataToSend := r.FormValue("dataToSend")
 
 		conn, err := net.Dial(protocol, hostName+":"+portNumber)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
+		checkHttpError(err, w)
 		if sendMode == "SendBase64" {
 			data64, err := base64.StdEncoding.DecodeString(dataToSend)
-			if err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-			}
+			checkHttpError(err, w)
 			fmt.Fprintf(conn, "%s\r\n\r\n", data64)
 			status, err := bufio.NewReader(conn).ReadString('\n')
 			if err != nil {
@@ -87,9 +78,7 @@ func connectHandler(w http.ResponseWriter, r *http.Request) {
 			fmt.Fprintf(w, "OK: no data to be sent")
 		}
 		err = conn.Close()
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
+		checkHttpError(err, w)
 	} else {
 		fmt.Fprintf(w, "DISABLED: remote connection is disabled")
 	}

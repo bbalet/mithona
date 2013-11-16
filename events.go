@@ -23,7 +23,7 @@ import (
 )
 
 func eventsHandler(w http.ResponseWriter, r *http.Request) {
-	var p = pageContent(r, "Events on this machine", nil)
+	var p = pageContent(r, "Events on this computer", nil)
 	err := templates["events"].ExecuteTemplate(w, "base", p)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

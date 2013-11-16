@@ -1,6 +1,6 @@
 package main
 
-/*  goServerView allows to simply share information on a server with its users
+/*  mithona allows to simply share information on a server with its users
     Copyright (C) 2013 Benjamin BALET
 
     This program is free software: you can redistribute it and/or modify
@@ -17,14 +17,14 @@ package main
     along with this program.  If not, see <http://www.gnu.org/licenses/>.*/
 
 import (
-	"runtime"
-	"os/exec"
-    "net/http"
-	"io"
-	"fmt"
 	"bytes"
 	"encoding/csv"
 	"encoding/json"
+	"fmt"
+	"io"
+	"net/http"
+	"os/exec"
+	"runtime"
 	"strings"
 )
 
@@ -40,7 +40,7 @@ func csvToJson(content string, query QueryType) ResultType {
 		return ResultType{}
 	}
 	result := ResultType{}
-	
+
 	for i, _ := range header {
 		if !query.Columns[i].Ignore {
 			var value ColumnType
@@ -49,18 +49,18 @@ func csvToJson(content string, query QueryType) ResultType {
 			result.Columns = append(result.Columns, value)
 		}
 	}
-	
+
 	for {
-        record, err := reader.Read()
-        if err == io.EOF {
-            break
-        } else if err != nil {
-            fmt.Println("Error:", err)
-            return ResultType{}
-        }
+		record, err := reader.Read()
+		if err == io.EOF {
+			break
+		} else if err != nil {
+			fmt.Println("Error:", err)
+			return ResultType{}
+		}
 		var line RecordType
 		for i, _ := range record {
-			if !query.Columns[i].Ignore {				
+			if !query.Columns[i].Ignore {
 				line.Columns = append(line.Columns, strings.TrimSpace(record[i]))
 			}
 		}
@@ -69,9 +69,11 @@ func csvToJson(content string, query QueryType) ResultType {
 	return result
 }
 
-func isQueryAvailable(name string) (query QueryType, isFound bool)  {
-	for _,element := range config.Queries {
-	  if element.Name == name { return  element, true}
+func isQueryAvailable(name string) (query QueryType, isFound bool) {
+	for _, element := range config.Queries {
+		if element.Name == name {
+			return element, true
+		}
 	}
 	return QueryType{}, false
 }
@@ -83,7 +85,7 @@ func statHandler(w http.ResponseWriter, r *http.Request) {
 	var err error
 	var out []byte
 	var content string
-	
+
 	queryName := r.FormValue("query")
 
 	query, found := isQueryAvailable(queryName)
@@ -91,38 +93,38 @@ func statHandler(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/", http.StatusFound)
 		return
 	}
-	
+
 	//Run the query through the command line
 	switch runtime.GOOS {
-		case "windows":
-			out, err = exec.Command("cmd", "/c", query.CmdLine).Output()
-			content = string(bytes.Trim(out, " \n\r"))
-		default:
-			out, err = exec.Command(query.CmdLine).Output()
-			content = string(out)			
+	case "windows":
+		out, err = exec.Command("cmd", "/c", query.CmdLine).Output()
+		content = string(bytes.Trim(out, " \n\r"))
+	default:
+		out, err = exec.Command(query.CmdLine).Output()
+		content = string(out)
 	}
 	if err != nil {
 		logFatal("%T", err)
 	}
-	
+
 	switch strings.ToLower(query.Type) {
-		case "graph":
-			w.Header().Set("Content-Type", "application/json")
-			resultJson := csvToJson(content, query)
-			b, err := json.Marshal(resultJson)
-			if err != nil {
-				fmt.Println("Error:", err)
-			}
-			fmt.Fprintf(w, "%s", b)
-		case "datatable":
-			w.Header().Set("Content-Type", "application/json")
-			resultJson := csvToJson(content, query)
-			fmt.Fprint(w, resultJson)
-		case "values":
-			w.Header().Set("Content-Type", "text/plain")
-			io.WriteString(w, content)
-		default:
-			w.Header().Set("Content-Type", "text/plain")			
-			io.WriteString(w, content)
+	case "graph":
+		w.Header().Set("Content-Type", "application/json")
+		resultJson := csvToJson(content, query)
+		b, err := json.Marshal(resultJson)
+		if err != nil {
+			fmt.Println("Error:", err)
+		}
+		fmt.Fprintf(w, "%s", b)
+	case "datatable":
+		w.Header().Set("Content-Type", "application/json")
+		resultJson := csvToJson(content, query)
+		fmt.Fprint(w, resultJson)
+	case "values":
+		w.Header().Set("Content-Type", "text/plain")
+		io.WriteString(w, content)
+	default:
+		w.Header().Set("Content-Type", "text/plain")
+		io.WriteString(w, content)
 	}
 }

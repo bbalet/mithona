@@ -23,7 +23,6 @@ import (
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
-	"html/template"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -102,6 +101,8 @@ func main() {
 	}
 }
 
+// doWork is the actual main entry of the application whereas main set up
+// the context (console program or service)
 func doWork() {
 	//Load configuration
 	logInfo("Load configuration")
@@ -125,18 +126,10 @@ func doWork() {
 		MaxAge: 86400 * 7,
 	}
 
-	//Define the map of nested templates
+	//Define the map of nested templates and subscribe to changes
 	logInfo("Define the map of nested templates")
-	templates["home"] = template.Must(template.ParseFiles(XP+"/tmpl/home.html", XP+"/tmpl/base.html", XP+"/tmpl/menu.html", XP+"/tmpl/header.html", XP+"/tmpl/footer.html"))
-	templates["connect"] = template.Must(template.ParseFiles(XP+"/tmpl/connect.html", XP+"/tmpl/base.html", XP+"/tmpl/menu.html", XP+"/tmpl/header.html", XP+"/tmpl/footer.html"))
-	templates["network"] = template.Must(template.ParseFiles(XP+"/tmpl/network.html", XP+"/tmpl/base.html", XP+"/tmpl/menu.html", XP+"/tmpl/header.html", XP+"/tmpl/footer.html"))
-	templates["browser"] = template.Must(template.ParseFiles(XP+"/tmpl/network.html", XP+"/tmpl/base.html", XP+"/tmpl/menu.html", XP+"/tmpl/header.html", XP+"/tmpl/footer.html"))
-	templates["sharefile"] = template.Must(template.ParseFiles(XP+"/tmpl/sharefile.html", XP+"/tmpl/base.html", XP+"/tmpl/menu.html", XP+"/tmpl/header.html", XP+"/tmpl/footer.html"))
-	templates["browser"] = template.Must(template.ParseFiles(XP+"/tmpl/browser.html", XP+"/tmpl/base.html", XP+"/tmpl/menu.html", XP+"/tmpl/header.html", XP+"/tmpl/footer.html"))
-	templates["report"] = template.Must(template.ParseFiles(XP+"/tmpl/report.html", XP+"/tmpl/base.html", XP+"/tmpl/menu.html", XP+"/tmpl/header.html", XP+"/tmpl/footer.html"))
-	templates["report-edit"] = template.Must(template.ParseFiles(XP+"/tmpl/report-edit.html", XP+"/tmpl/base.html", XP+"/tmpl/menu.html", XP+"/tmpl/header.html", XP+"/tmpl/footer.html"))
-	templates["events"] = template.Must(template.ParseFiles(XP+"/tmpl/events.html", XP+"/tmpl/base.html", XP+"/tmpl/menu.html", XP+"/tmpl/header.html", XP+"/tmpl/footer.html"))
-	templates["login"] = template.Must(template.ParseFiles(XP+"/tmpl/login.html", XP+"/tmpl/base.html", XP+"/tmpl/menu.html", XP+"/tmpl/header.html", XP+"/tmpl/footer.html"))
+	createTemplateMap()
+	fsTemplatesWatcher()
 
 	//Start the embedded web server
 	logInfo("Start the embedded web server")
